@@ -20,6 +20,13 @@ class TestBooksCollector:
         collector.set_book_genre('Гордость и предубеждение и зомби', 'Ужасы')
         assert collector.get_book_genre('Гордость и предубеждение и зомби') == 'Ужасы', 'Добавленный жанр отличается от ожидаемого'
 
+    @pytest.mark.parametrize('book, genre', [['Гордость и предубеждение и зомби', 'Ужасы'], ['Что делать, если ваш кот хочет вас убить', 'Мультфильмы']])
+    def test_get_book_genre_book_returns_correct_genre(self, book, genre):
+        collector = BooksCollector()
+        collector.add_new_book(book)
+        collector.set_book_genre(book, genre)
+        assert collector.get_book_genre(book) == genre, 'Жанр книги {book} отличается от {genre}}'
+
     def test_get_book_genre_book_not_found(self):
         collector = BooksCollector()
         collector.add_new_book('Гордость и предубеждение и зомби')
@@ -31,7 +38,7 @@ class TestBooksCollector:
         collector = BooksCollector()
         collector.add_new_book(book)
         collector.set_book_genre(book, genre)
-        assert book in collector.get_books_with_specific_genre(genre), 'Ожидаемой книги нет в списке'
+        assert book in collector.get_books_with_specific_genre(genre), 'Книги {book} нет в списке по жанру {genre}'
 
     def test_get_books_genre_returns_expected_dict(self):
         collector = BooksCollector()
@@ -39,12 +46,18 @@ class TestBooksCollector:
         collector.set_book_genre('Гордость и предубеждение и зомби', 'Ужасы')
         assert collector.get_books_genre() == {'Гордость и предубеждение и зомби':'Ужасы'}, 'books_genre отличается от ожидаемого'
 
+    def test_get_books_for_children_book_in_list(self):
+        collector = BooksCollector()
+        collector.add_new_book('Шрек')
+        collector.set_book_genre('Шрек', 'Мультфильмы')
+        assert 'Шрек' in collector.get_books_for_children(), 'Ожидаемой книги нет в списке books_for_children'
+
     @pytest.mark.parametrize('book, genre', [['Гордость и предубеждение и зомби', 'Ужасы'], ['Шерлок Холмс', 'Детективы']])
     def test_get_books_for_children_book_not_in_list(self, book, genre):
         collector = BooksCollector()
         collector.add_new_book(book)
         collector.set_book_genre(book, genre)
-        assert not book in collector.get_books_for_children(), 'Ожидаемой книги нет в списке books_for_children'
+        assert not book in collector.get_books_for_children(), 'В списке books_for_children книга {book} в жанре {genre}'
 
     def test_add_book_in_favorites_new_book_added(self):
         collector = BooksCollector()
